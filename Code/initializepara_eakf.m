@@ -35,7 +35,7 @@ for l=1:num_loc
         para(alphamap(l),:)=parafit(5,ceil(rand(1,num_ens)*size(parafit,2)));
     end
     %beta
-    if sum(dailyincidence(l,1:24))>=20%ismember(l,nyloc)
+    if sum(dailyincidence(l,1:24))>=20
         scale=1;
         factor=max(0.1,PD(l)/PD_median*scale);
     else
