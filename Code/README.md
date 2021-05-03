@@ -4,14 +4,14 @@ Code for Sen Pei, Teresa K. Yamana, Sasikiran Kandula, Marta Galanti, Jeffrey Sh
 
 Code to run inference for COVID-19 spread in the US at county level.
 
-#Functions
+## Functions
 1. infer.m: the main function to run inference
 2. initialize.m: compute initial conditions for all subpopulations
 3. seeding.m: set initial infection for all subpopulations
 4. initializepara_eakf.m: initialize the ensemble of parameters for data assimilation
 5. model_eakf.cpp: run the transmission model
 
-#Data and data structure
+## Data and data structure
 1. commutedata.mat:
 a. The commuting network structure is stored in two vectors: nl (neighbor list) and part (partition). The vector nl records all neighbors of counties connected in the commuting network, and the vector part specifies the index range for the neighbors of each county. To find the list of counties where commuters living in county i work, use nl(part(i):part(i+1)-1). For computational convenience, the first county in the list is county i itself.
 b. The number of commuters is stored in the vector C. For instance, the number of commuters from county i to county j=nl(k) [where part(i)<=k<=part(i+1)-1] is C(k). Note the index k should be within the index range for county i, i.e., from part(i) to part(i+1)-1.
@@ -24,13 +24,13 @@ c. The average number of commuters between two counties is stored in the vector 
 7. popd.mat: population density of each county, persons per square miles
 8. population.mat: county population
 
-#How to run inference
+## How to run inference
 To speed up the inference, the transmission model is programmed in C++. The inference function calls the C++ function through interface between MATLAB and C++.
 
 1. Compile the C++ function in MATLAB using “mex model_eakf.cpp”. A C++ compiler (e.g., Xcode) needs to be installed on the computer before running this command.
 2. Run infer.m
 
-#Outputs
+## Outputs
 1. para_post: posterior parameters, each with 100 ensemble members
 2. S_post: posterior susceptibility in each county on each day, 100 ensemble members
 3. dailyIr_post_rec: posterior estimate of the daily newly infected documented infections in each county on each day, 100 ensemble members
