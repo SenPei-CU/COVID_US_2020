@@ -6,14 +6,13 @@ load commutedata%load inter-county commuting data
 load population%load county population
 load countyfips%load county information
 load dailyincidence%load county-level daily reported cases
-load parafit1%load initial parameters
+load parafit%load initial parameters
 load MI_inter%load inter-county visitor numbers
 %%%%%%%%%%%%%%%%%%%%
-rnds=zeros(1e4,size(delaypara,1));%delay for reporting
+rnds=zeros(1e4,size(delaypara,1));%pre-generate delay for reporting
 for t=1:size(delaypara,1)
-    Td=delaypara(t,1)*delaypara(t,2)+2.5;
     a=delaypara(t,1);
-    b=Td/a;
+    b=delaypara(t,2);
     rnds(:,t)=ceil(gamrnd(a,b,1e4,1));
 end
 %%%%%%%%%%%%%%%%%%%%
@@ -54,7 +53,7 @@ for t=10:size(MI_inter,2)
     MI_inter_relative(:,t+9)=MI_inter(:,t)./MI_inter(:,t-1);
     MI_inter_relative(isnan(MI_inter_relative(:,t+9)),t+9)=0;
     MI_inter_relative(isinf(MI_inter_relative(:,t+9)),t+9)=0;
-    MI_inter_relative(:,t+9)=min(MI_inter_relative(:,t+9),1.01);
+    MI_inter_relative(:,t+9)=min(MI_inter_relative(:,t+9),1.1);
 end
 MI_inter_relative(:,1:10)=1;
 C=C*ones(1,T);%Daily subpopulation size
@@ -74,7 +73,7 @@ for t=10:T%day 10, March 1
     end
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%
-num_ens=100;%number of ensemble members
+num_ens=10;%number of ensemble members
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %initialize model
 [S,E,Ir,Iu,Seedc]=initialize(nl,part,C(:,1),num_ens,dailyincidence);
@@ -155,7 +154,7 @@ for t=1:num_times%start from Feb 21, stop on Dec 31
     for t1=t:t+Tproj-1
         for k=1:num_ens%run for each ensemble member
             [S_temp(:,k),E_temp(:,k),Ir_temp(:,k),Iu_temp(:,k)]=adjustmobility(S_temp(:,k),E_temp(:,k),Ir_temp(:,k),Iu_temp(:,k),nl,part,MI_inter_relative,t1);
-            [S_temp(:,k),E_temp(:,k),Ir_temp(:,k),Iu_temp(:,k),dailyIr_temp,dailyIu_temp]=model_eakf(nl,part,C(:,t1),Cave(:,t1),S_temp(:,k),E_temp(:,k),Ir_temp(:,k),Iu_temp(:,k),para(:,k),betamap,alphamaps);
+            [S_temp(:,k),E_temp(:,k),Ir_temp(:,k),Iu_temp(:,k),dailyIr_temp,dailyIu_temp]=model_eakf(nl,part,C(:,min(t1,T)),Cave(:,min(t1,T)),S_temp(:,k),E_temp(:,k),Ir_temp(:,k),Iu_temp(:,k),para(:,k),betamap,alphamaps);
             %reporting delay
             monthnum=max(month(Tstart+t1-1)-3,1);
             monthnum=min(monthnum, size(rnds,2));
@@ -316,22 +315,30 @@ for t=1:num_times%start from Feb 21, stop on Dec 31
     para_post(:,:,t)=para;
     toc
 end
-%save outputs
+
 save inference.mat para_post S_post dailyIr_post_rec dailyIu_post_rec obs_temp
+% para_post: posterior parameters
+% S_post: posterior susceptibility in each county on each day
+% dailyIr_post_rec: posterior estimate of the daily newly infected documented infections in each county on each day
+% dailyIu_post_rec: posterior estimate of the daily newly infected undocumented infections in each county on each day
+% obs_temp: posterior fitting of daily confirmed cases in each county
 
 function para = checkbound_para(para,paramax,paramin)
+%check parameter bound
 for i=1:size(para,1)
     para(i,para(i,:)<paramin(i))=paramin(i)*(1+0.2*rand(sum(para(i,:)<paramin(i)),1));
     para(i,para(i,:)>paramax(i))=paramax(i)*(1-0.2*rand(sum(para(i,:)>paramax(i)),1));
 end
 
 function [S,E,Ir,Iu]=checkbound(S,E,Ir,Iu,C)
+%check variable bound
 for k=1:size(S,2)
     S(S(:,k)<0,k)=0; E(E(:,k)<0,k)=0; Ir(Ir(:,k)<0,k)=0; Iu(Iu(:,k)<0,k)=0;
 end
 
 
 function [S,E,Ir,Iu]=adjustmobility(S,E,Ir,Iu,nl,part,MI_inter_relative,t)
+%adjust subpopulation size using mobility data
 num_loc=size(MI_inter_relative,1);
 for l=1:num_loc
     for j=part(l)+1:part(l+1)-1

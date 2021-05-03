@@ -1,4 +1,5 @@
 function [S,E,Ir,Iu,Seedc]=initialize(nl,part,C,num_ens,incidence)
+%compute initial conditions for all subpopulations
 num_loc=size(part,1)-1;
 num_mp=size(nl,1);
 S=C*ones(1,num_ens);

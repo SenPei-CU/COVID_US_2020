@@ -1,5 +1,6 @@
 function [para,paramax,paramin,betamap,alphamap]=initializepara_eakf(dailyincidence,num_ens,parafit)
-%Z,D,mu,theta,alpha1,alpha2,...,alpha3142,beta1,...,beta3142
+%initialize ensemble members
+%para: Z,D,mu,theta,alpha1,alpha2,...,alpha3142,beta1,...,beta3142
 Zlow=2;Zup=5;%latency period
 Dlow=2;Dup=5;%infectious period
 mulow=0.2;muup=1;%relative transmissibility
@@ -29,13 +30,13 @@ para(3,:)=median(parafit(2,:))*ones(1,num_ens);
 para(4,:)=median(parafit(6,:))*ones(1,num_ens);
 for l=1:num_loc
     %alpha
-    if sum(dailyincidence(l,1:24))>=20
+    if sum(dailyincidence(l,1:24))>=20%at least 20 cases by March 15
         para(alphamap(l),:)=parafit(5,ceil(rand(1,num_ens)*size(parafit,2)))*0.6;
     else
         para(alphamap(l),:)=parafit(5,ceil(rand(1,num_ens)*size(parafit,2)));
     end
     %beta
-    if sum(dailyincidence(l,1:24))>=20
+    if sum(dailyincidence(l,1:24))>=20%at least 20 cases by March 15
         scale=1;
         factor=max(0.1,PD(l)/PD_median*scale);
     else

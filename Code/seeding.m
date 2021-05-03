@@ -1,4 +1,5 @@
 function [S,E,Ir,Iu]=seeding(S,E,Ir,Iu,nl,part,C,Seedc,t)
+%set initial infection for all subpopulations
 num_loc=size(Seedc,1);
 num_ens=size(S,2);
 for l=1:num_loc
