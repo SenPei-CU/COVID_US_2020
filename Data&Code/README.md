@@ -1,6 +1,6 @@
 # COVID_US_2020
 
-Code for Sen Pei, Teresa K. Yamana, Sasikiran Kandula, Marta Galanti, Jeffrey Shaman, "Overall burden and characteristics of COVID-19 in the United States during 2020", 2021.
+Code for Sen Pei, Teresa K. Yamana, Sasikiran Kandula, Marta Galanti, Jeffrey Shaman, "Burden and characteristics of COVID-19 in the United States during 2020", 2021.
 
 Code to run inference for COVID-19 spread in the US at county level.
 
