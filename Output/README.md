@@ -8,4 +8,4 @@ Outputs for Sen Pei, Teresa K. Yamana, Sasikiran Kandula, Marta Galanti, Jeffrey
 4. CountyPopulation.csv: Population in each county.
 5. Death_deconvoluted.csv: deconvoluted daily death for cases reported on each day in each county.
 6. IFR.csv: infection fatality rate in each county on each day. For day t, if the average daily death per 100,000 people from day t-14 to day t+14 is below 0.5, CFR is not shown and marked with “NaN”.
-7. Susceptibility.csv: daily susceptibility in each county on each day. A few counties with small population and abnormal reporting issues were estimated to have susceptibility below 25%. We ignore those potentially biased estimates and marked with "NaN"
+7. Susceptibility.csv: daily susceptibility in each county on each day. A few counties with small population and abnormal reporting issues were estimated to have susceptibility below 25%. We ignore those potentially biased estimates and mark those counties with "NaN"
