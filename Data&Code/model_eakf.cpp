@@ -168,8 +168,8 @@ void mexFunction(int nlmxhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     //comput IrD,IuD,SD,ED,RD
     for (i=0; i<num_loc; i++){
         for (j=part[i]; j<part[i+1]; j++){
-            IrD[i]=IrD[i]+Ir[j];
-            IuD[(int)nl[j]]=IuD[(int)nl[j]]+Iu[j];
+            IrD[(int)nl[j]]=IrD[(int)nl[j]]+Ir[j];
+            IuD[i]=IuD[i]+Iu[j];
             SD[i]=SD[i]+S[j];
             ED[i]=ED[i]+E[j];
             RD[i]=RD[i]+R[j];
